@@ -1,7 +1,21 @@
 import os
+import sys
 import json
-import importlib
 import inspect
+import importlib
+import subprocess
+
+class Requirements:
+    def __init__(self, txt_file="requirements.txt"):
+        requirements_path = txt_file
+
+        if os.path.exists(requirements_path):
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", requirements_path])
+            except subprocess.CalledProcessError:
+                print("Error: Failed to install requirements from requirements.txt")
+        else:
+            print("Warning: requirements.txt not found")
 
 class ConfigReader:
     def __init__(self, file_path):

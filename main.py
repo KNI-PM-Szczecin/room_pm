@@ -1,7 +1,9 @@
+from utilities import baseUtils
+baseUtils.Requirements()
+
 try:
     from nextcord.ext import commands
     import nextcord
-    from utilities import baseUtils
 except:
     raise RuntimeError('\n > Failed to load libraries!\n')
 

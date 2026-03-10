@@ -1,2 +1,4 @@
 nextcord
 certifi
+dotenv
+supabase
