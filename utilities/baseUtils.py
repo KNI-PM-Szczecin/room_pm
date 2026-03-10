@@ -35,6 +35,12 @@ class ConfigReader:
     def get_bot_id(self):
         return self.config_data.get("bot", {}).get("id", "")
 
+    def get_supabase_url(self):
+        return self.config_data.get("supabase", {}).get("url", "")
+
+    def get_supabase_key(self):
+        return self.config_data.get("supabase", {}).get("key", "")
+
 class Loader:
     def __init__(self, payload: dict[str, any], folder="cogs"):
         self.payload = payload

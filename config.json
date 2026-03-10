@@ -2,5 +2,9 @@
   "bot": {
     "token": "",
     "id": 123
+  },
+  "supabase": {
+    "url": "",
+    "key": ""
   }
 }
