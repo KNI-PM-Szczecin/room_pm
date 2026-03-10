@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 # Example usage:
-# room_finder = RoomFinder(URL, KEY, _debug=True)
-# room_finder.find_empty_rooms("2026-03-11 12:00", BUILDING_NAME)
+# room_finder = RoomFinder(URL, KEY)
+# room_finder.findEmptyRooms("2026-03-11 12:00", BUILDING_NAME)
 # will find empty rooms in BUILDING_NAME from 12:00 to 13:00 on 2026-03-11
 # returns a list of dictionaries with room names and their buildings, e.g.:
 # [
@@ -21,7 +21,7 @@ class RoomFinder:
         load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
         self.db = create_client(URL, KEY)
 
-    def find_busy_rooms(self, startTime: datetime, _building: str, endTime: datetime | None = None) -> list:
+    def findBusyRooms(self, startTime: datetime, _building: str, endTime: datetime | None = None) -> list:
         if self.DEBUG:
             print(f"Finding full rooms in {_building} from {startTime} to {endTime}")
         result = (
@@ -35,7 +35,7 @@ class RoomFinder:
             print(*result.data, sep="\n")
         return result.data
 
-    def find_empty_rooms(self, _date: str, _building: str, _endTime: str | None = None) -> list:
+    def findEmptyRooms(self, _date: str, _building: str, _endTime: str | None = None) -> list:
 
         startTime = datetime.strptime(_date, '%Y-%m-%d %H:%M')
         if not _endTime:
