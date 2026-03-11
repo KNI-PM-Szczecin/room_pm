@@ -1,7 +1,6 @@
 import nextcord
 from datetime import datetime
 
-import utilities.baseUtils
 from utilities import baseUtils
 from nextcord.ext import commands
 from utilities.findRoom import RoomFinder
@@ -78,7 +77,7 @@ class RoomCog(commands.Cog):
         if year is not None: year = baseUtils.ShortYear(year)
         else: year = datetime.today().year
         date = f"{day}-{month}-{year}"
-        date_alt = f"{year}-{month}-{day}"
+        date_iso = f"{year}-{month}-{day}"
 
         view = self.HourSelectView()
         await interaction.edit_original_message(content=f"Wybierz godziny dla {building} ({date}):", view=view)
@@ -88,7 +87,7 @@ class RoomCog(commands.Cog):
         hours = [baseUtils.HoursConverter(i) for i in view.selected_hours]
         rooms = baseUtils.ListCommon([
             [room["name"] for room in
-             self.roomFinder.findEmptyRooms(f"{date_alt} {h[0]}", building, f"{date_alt} {h[1]}")]
+             self.roomFinder.findEmptyRooms(f"{date_iso} {h[0]}", building, f"{date_iso} {h[1]}")]
             for h in hours
         ])
 
@@ -98,6 +97,7 @@ class RoomCog(commands.Cog):
             rooms_string = ", ".join(rooms) if rooms else "Brak wolnych sal dla wybranych godzin."
 
             final_content = (
+                f"**Budynek:** {building}\n"
                 f"**Data:** {date}\n"
                 f"**Wybrane godziny:** {hours_string}\n"
                 f"**Dostępne sale:** {rooms_string}"

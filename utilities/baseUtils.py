@@ -6,9 +6,6 @@ import datetime
 import importlib
 import subprocess
 
-from tenacity import retry_unless_exception_type
-
-
 class Requirements:
     def __init__(self, txt_file="requirements.txt"):
         requirements_path = txt_file
