@@ -1,5 +1,5 @@
 import nextcord
-import datetime
+from datetime import datetime
 from utilities import baseUtils
 from nextcord.ext import commands
 from utilities.find_room import RoomFinder
@@ -69,20 +69,22 @@ class RoomCog(commands.Cog):
             description="Wybierz rok, (można skrócić np. 7 27, 027 -> 2027)",
             required=False
         )):
-        await interaction.response.send_message(f"Szukam pokoju w {building} na dzień {day}:{month}:{year}...")
+        await interaction.response.defer(ephemeral=True)
 
         day = baseUtils.ZeroNum(str(day))
         month = baseUtils.ZeroNum(str(month))
         if year is not None: year = baseUtils.ShortYear(year)
         else: year = datetime.today().year
         date = f"{day}-{month}-{year}"
+        date_alt = f"{year}-{month}-{day}"
 
         view = self.HourSelectView()
+        await interaction.edit_original_message(content=f"Wybierz godziny dla {building} ({date}):", view=view)
+
         await view.wait()
 
         hours = [baseUtils.HoursConverter(i)[0] for i in view.selected_hours]
-        rooms = baseUtils.ListCommon([self.roomFinder.findEmptyRooms(f"{date} {h}", building) for h in hours])
-
+        rooms = baseUtils.ListCommon([self.roomFinder.findEmptyRooms(f"{date_alt} {h}", building) for h in hours])
 
         if view.selected_hours:
             final_content = (
