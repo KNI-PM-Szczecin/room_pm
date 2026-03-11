@@ -72,3 +72,28 @@ class Loader:
                     print(f"Loaded: {class_name}")
                 except (ImportError, AttributeError, TypeError) as e:
                     print(f"\n > Failed to load: {module_name}.{class_name}: {e}\n")
+
+class HoursConverter:
+    HOURS_MAP = {
+        1: ["8:00", "8:45"],
+        2: ["8:50", "9:35"],
+        3: ["9:45", "10:30"],
+        4: ["10:40", "11:25"],
+        5: ["11:45", "12:30"],
+        6: ["12:40", "13:25"],
+        7: ["13:35", "14:20"],
+        8: ["14:30", "15:15"],
+        9: ["15:30", "16:15"],
+        10: ["16:25", "17:10"],
+        11: ["17:20", "18:05"],
+        12: ["18:15", "19:00"],
+        13: ["19:05", "19:50"],
+        14: ["19:55", "20:40"]
+    }
+
+    def __init__(self, number: int):
+        self.number = number
+
+    def __str__(self):
+        time = self.HOURS_MAP.get(self.number, "Incorrect value")
+        return str(time)
