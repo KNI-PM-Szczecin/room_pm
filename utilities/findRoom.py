@@ -43,7 +43,7 @@ class RoomFinder:
         else:
             endTime = datetime.strptime(_endTime, '%Y-%m-%d %H:%M')
         
-        busy_rooms = self.find_busy_rooms(startTime, _building, endTime)
+        busy_rooms = self.findBusyRooms(startTime, _building, endTime)
         busy_room_names = {room["room"] for room in busy_rooms}
 
         all_rooms_result = (
