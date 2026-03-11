@@ -3,7 +3,7 @@ from utilities import baseUtils
 from nextcord.ext import commands
 from utilities.find_room import RoomFinder
 
-class PlaceholderCog(commands.Cog):
+class RoomCog(commands.Cog):
     def __init__(self, client, config: baseUtils.ConfigReader):
         self.client = client
         self.config = config
@@ -34,25 +34,6 @@ class PlaceholderCog(commands.Cog):
     )
     async def find_room(self,
         interaction: nextcord.Interaction,
-        day: str = nextcord.SlashOption(
-            name= "dzien",
-            description="Wybierz dzień (0-31)",
-            min_value=0,
-            max_value=31,
-            required=True
-        ),
-        month: str = nextcord.SlashOption(
-          name = "miesiac",
-            description="Wybierz miesiąc (1-12)",
-            min_value=1,
-            max_value=12,
-            required=True
-        ),
-        year: str = nextcord.SlashOption(
-            name = "rok",
-            description="Wybierz rok, (można skrócić np. 7 27, 027 -> 2027)",
-            required=False
-        ),
         building: str = nextcord.SlashOption(
             name="budynek",
             description="Wybierz budynek",
@@ -67,11 +48,30 @@ class PlaceholderCog(commands.Cog):
                 "Szczerbcowa": "Szczerbcow",
                 "Żołnierska": "Żołnierska"
             }
+        ),
+        day: int = nextcord.SlashOption(
+            name= "dzien",
+            description="Wybierz dzień (0-31)",
+            min_value=0,
+            max_value=31,
+            required=True
+        ),
+        month: int = nextcord.SlashOption(
+          name = "miesiac",
+            description="Wybierz miesiąc (1-12)",
+            min_value=1,
+            max_value=12,
+            required=True
+        ),
+        year: str = nextcord.SlashOption(
+            name = "rok",
+            description="Wybierz rok, (można skrócić np. 7 27, 027 -> 2027)",
+            required=False
         )):
         await interaction.response.send_message(f"Szukam pokoju w {building} na dzień {day}:{month}:{year}...")
 
-        day = baseUtils.ZeroNum(day)
-        month = baseUtils.ZeroNum(month)
+        day = baseUtils.ZeroNum(str(day))
+        month = baseUtils.ZeroNum(str(month))
         year = baseUtils.ShortYear(year)
         date = f"{day}-{month}-{year}"
 
