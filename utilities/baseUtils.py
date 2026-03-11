@@ -2,8 +2,12 @@ import os
 import sys
 import json
 import inspect
+import datetime
 import importlib
 import subprocess
+
+from tenacity import retry_unless_exception_type
+
 
 class Requirements:
     def __init__(self, txt_file="requirements.txt"):
@@ -97,3 +101,22 @@ class HoursConverter:
     def __str__(self):
         time = self.HOURS_MAP.get(self.number, "Incorrect value")
         return str(time)
+
+class ZeroNum:
+    def __init__(self, number: int, _len: int = 2):
+        self.len = _len
+        self.number = str(number)
+
+    def __str__(self):
+        return self.number.zfill(self.len)
+
+class ShortYear:
+    def __init__(self, year):
+        self.year = str(year)
+        self.base = str(datetime.date.today().year)
+
+    def __str__(self):
+        prefix_len = len(self.base) - len(self.year)
+        if prefix_len < 0:
+            return self.year
+        return self.base[:prefix_len] + self.year
