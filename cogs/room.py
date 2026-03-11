@@ -1,8 +1,10 @@
 import nextcord
 from datetime import datetime
+
+import utilities.baseUtils
 from utilities import baseUtils
 from nextcord.ext import commands
-from utilities.find_room import RoomFinder
+from utilities.findRoom import RoomFinder
 
 class RoomCog(commands.Cog):
     def __init__(self, client, config: baseUtils.ConfigReader):
@@ -21,7 +23,7 @@ class RoomCog(commands.Cog):
             min_values=1,
             max_values=14,
             options=[
-                nextcord.SelectOption(label=f"Godzina {i}", value=str(i)) for i in range(1, 15)
+                nextcord.SelectOption(label=f"Godzina {i} (od {baseUtils.HoursConverter(i)[0]} do {baseUtils.HoursConverter(i)[1]})", value=str(i)) for i in range(1, 15)
             ]
         )
         async def select_callback(self, select: nextcord.ui.StringSelect, interaction: nextcord.Interaction):
@@ -84,13 +86,21 @@ class RoomCog(commands.Cog):
         await view.wait()
 
         hours = [baseUtils.HoursConverter(i) for i in view.selected_hours]
-        rooms = baseUtils.ListCommon([self.roomFinder.findEmptyRooms(f"{date_alt} {h[0]}", building, f"{date_alt} {h[1]}") for h in hours])
+        rooms = baseUtils.ListCommon([
+            [room["name"] for room in
+             self.roomFinder.findEmptyRooms(f"{date_alt} {h[0]}", building, f"{date_alt} {h[1]}")]
+            for h in hours
+        ])
 
         if view.selected_hours:
+            formatted_hours = [f"{h}: {baseUtils.HoursConverter(h)[0]}-{baseUtils.HoursConverter(h)[1]}" for h in view.selected_hours]
+            hours_string = ", ".join(formatted_hours)
+            rooms_string = ", ".join(rooms) if rooms else "Brak wolnych sal dla wybranych godzin."
+
             final_content = (
                 f"**Data:** {date}\n"
-                f"**Wybrane godziny:** {view.selected_hours}\n"
-                f"**Dostępne sale:** {rooms}"
+                f"**Wybrane godziny:** {hours_string}\n"
+                f"**Dostępne sale:** {rooms_string}"
             )
 
             await interaction.edit_original_message(
