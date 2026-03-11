@@ -1,4 +1,5 @@
 import nextcord
+import datetime
 from utilities import baseUtils
 from nextcord.ext import commands
 from utilities.find_room import RoomFinder
@@ -72,7 +73,8 @@ class RoomCog(commands.Cog):
 
         day = baseUtils.ZeroNum(str(day))
         month = baseUtils.ZeroNum(str(month))
-        year = baseUtils.ShortYear(year)
+        if year is not None: year = baseUtils.ShortYear(year)
+        else: year = datetime.today().year
         date = f"{day}-{month}-{year}"
 
         view = self.HourSelectView()
