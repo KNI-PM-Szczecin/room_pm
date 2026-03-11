@@ -83,8 +83,8 @@ class RoomCog(commands.Cog):
 
         await view.wait()
 
-        hours = [baseUtils.HoursConverter(i)[0] for i in view.selected_hours]
-        rooms = baseUtils.ListCommon([self.roomFinder.findEmptyRooms(f"{date_alt} {h}", building) for h in hours])
+        hours = [baseUtils.HoursConverter(i) for i in view.selected_hours]
+        rooms = baseUtils.ListCommon([self.roomFinder.findEmptyRooms(f"{date_alt} {h[0]}", building, f"{date_alt} {h[1]}") for h in hours])
 
         if view.selected_hours:
             final_content = (
