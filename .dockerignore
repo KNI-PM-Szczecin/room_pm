@@ -1,0 +1,22 @@
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Bot Configuration and Sensitive Data
+dev_config.json
+.env
+
+# Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.idea/
+.vscode/
+
+# Git
+.git/
+.gitignore

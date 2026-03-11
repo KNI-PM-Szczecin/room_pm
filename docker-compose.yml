@@ -1,0 +1,7 @@
+services:
+  room-pm:
+    build: .
+    container_name: room_pm_bot
+    restart: always
+    volumes:
+      - ./config.json:/roompm/config.json
