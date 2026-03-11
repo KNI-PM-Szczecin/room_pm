@@ -98,6 +98,10 @@ class HoursConverter:
     def __init__(self, number: int):
         self.number = number
 
+    def __getitem__(self, index: int):
+        time_list = self.HOURS_MAP.get(self.number, [])
+        return time_list[index]
+
     def __str__(self):
         time = self.HOURS_MAP.get(self.number, "Incorrect value")
         return str(time)
@@ -120,3 +124,32 @@ class ShortYear:
         if prefix_len < 0:
             return self.year
         return self.base[:prefix_len] + self.year
+
+class ListCommon:
+    def __init__(self, data: list[list]):
+        if not data:
+            self.result = []
+            return
+
+        first_list = data[0]
+        other_sets = [set(sublist) for sublist in data[1:]]
+
+        self.result = [
+            item for item in first_list
+            if all(item in s for s in other_sets)
+        ]
+
+    def __str__(self):
+        return str(self.result)
+
+    def __repr__(self):
+        return f"ListCommon({self.result})"
+
+    def __iter__(self):
+        return iter(self.result)
+
+    def __getitem__(self, index):
+        return self.result[index]
+
+    def __len__(self):
+        return len(self.result)
