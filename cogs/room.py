@@ -1,6 +1,5 @@
 import nextcord
 from datetime import datetime
-
 from utilities import baseUtils
 from nextcord.ext import commands
 from utilities.findRoom import RoomFinder
@@ -49,7 +48,7 @@ class RoomCog(commands.Cog):
                 "H. Pobożnego": "HPobożnego",
                 "Szczerbcowa": "Szczerbcow",
                 "Żołnierska": "Żołnierska"
-            }
+            },
         ),
         day: int = nextcord.SlashOption(
             name= "dzien",
