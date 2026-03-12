@@ -63,7 +63,7 @@ class RoomCog(commands.Cog):
             description="Wybierz miesiąc (1-12)",
             min_value=1,
             max_value=12,
-            required=True
+            required=False
         ),
         year: str = nextcord.SlashOption(
             name = "rok",
@@ -73,7 +73,8 @@ class RoomCog(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         day = baseUtils.ZeroNum(str(day))
-        month = baseUtils.ZeroNum(str(month))
+        if month is not None: month = baseUtils.ZeroNum(str(month))
+        else: month = baseUtils.ZeroNum(str(datetime.today().month))
         if year is not None: year = baseUtils.ShortYear(year)
         else: year = datetime.today().year
         date = f"{day}-{month}-{year}"
