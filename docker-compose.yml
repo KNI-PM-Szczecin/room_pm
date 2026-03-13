@@ -5,3 +5,4 @@ services:
     restart: always
     volumes:
       - ./config.json:/roompm/config.json
+      - ./data:/data
