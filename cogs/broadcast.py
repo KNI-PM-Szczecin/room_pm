@@ -20,24 +20,26 @@ class BroadcastCog(commands.Cog):
     ):
         await interaction.response.defer(ephemeral=True)
 
-        #temp_forward_roles = [1481667679566958662, 1481667730410176644]
         forward_role = self.database.get_roles(guild_id=interaction.guild.id)
-
+        active_ids = baseUtils.ListCommon([forward_role, [role.id for role in message.role_mentions]])
         all_members = [member async for member in interaction.guild.fetch_members(limit=None)]
+
         target_members = [
             member for member in all_members
-            if any(role.id in forward_role for role in member.roles) and not member.bot
+            if any(role.id in active_ids for role in member.roles) and not member.bot
         ]
+        mentioned_roles = [role.name for role in message.role_mentions if role.id in active_ids]
 
         if not target_members:
-            await interaction.followup.send("Nie znaleziono użytkowników z wybranymi rolami.", ephemeral=True)
+            await interaction.followup.send("Nie znaleziono użytkowników z wspomnianymi rolami.", ephemeral=True)
             return
 
         content = message.content
         clean_content = re.sub(r"<@&[0-9]+>\s*", "", message.content)
+
         if not content and not message.attachments:
-            await interaction.response.send_message(
-                "Ta wiadomość jest pusta (może to sam embed lub wiadomość systemowa?",
+            await interaction.followup.send(
+                "Ta wiadomość jest pusta (może to embed lub wiadomość systemowa?)",
                 ephemeral=True
             )
             return
@@ -59,8 +61,16 @@ class BroadcastCog(commands.Cog):
                     for data in attachment_data
                 ]
 
+                content = (
+                    f"Przesłana wiadomość autorstwa **{message.author.display_name}**\n"
+                    f"Z **{interaction.guild.name}**\n\n"
+                    f"{clean_content}\n\n"
+                    f"_Otrzymujesz tę wiadomość ponieważ została przekzana przez administratora,_\n"
+                    f"_oraz posiadasz jedną z tych ról: {', '.join(mentioned_roles)}_"
+                )
+
                 await member.send(
-                    content=f"Przesłana wiadomość autorstwa **{message.author.display_name}**\nZ **{interaction.guild.name}**:\n\n{clean_content}",
+                    content=content,
                     files=current_files
                 )
                 success_count += 1
