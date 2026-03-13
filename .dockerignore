@@ -8,6 +8,11 @@ ENV/
 dev_config.json
 .env
 
+# --- Bot Data ---
+/[Dd]ata
+./[Dd]ata
+./[Dd]ata/*.db
+
 # Python files
 __pycache__/
 *.pyc

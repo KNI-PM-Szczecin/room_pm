@@ -62,7 +62,8 @@ class Loader:
 
                     args_map = {
                         "client": self.payload['client'],
-                        "config": self.payload['config']
+                        "config": self.payload['config'],
+                        "database": self.payload['database']
                     }
 
                     args = [args_map[p] for p in params if p in args_map]

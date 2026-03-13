@@ -36,6 +36,11 @@ env/
 dev_config.json
 .env
 
+# --- Bot Data ---
+/[Dd]ata
+./[Dd]ata
+./[Dd]ata/*.db
+
 # --- Logging ---
 *.log
 logs/
