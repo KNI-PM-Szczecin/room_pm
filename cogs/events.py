@@ -9,19 +9,19 @@ class EventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        db_guild_ids = self.database.get_all_guilds()
+        db_guild_ids = self.database.get_all_forward_guilds()
 
         added_count = 0
         for guild in self.client.guilds:
             if guild.id not in db_guild_ids:
-                self.database.add_guild(guild.id)
+                self.database.add_froward_guild(guild.id)
                 added_count += 1
                 print(f" > Guild synchronized: {guild.name} ({guild.id})")
 
         removed_count = 0
         for db_id in db_guild_ids:
             if not self.client.get_guild(db_id):
-                self.database.remove_guild(db_id)
+                self.database.remove_forward_guild(db_id)
                 removed_count += 1
 
         if added_count > 0 or removed_count > 0:
@@ -37,12 +37,12 @@ class EventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        self.database.add_guild(guild.id)
+        self.database.add_froward_guild(guild.id)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        self.database.remove_guild(guild.id)
+        self.database.remove_forward_guild(guild.id)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):
-        self.database.remove_role(role.guild.id, role.id)
+        self.database.remove_forward_role(role.guild.id, role.id)

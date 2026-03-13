@@ -20,7 +20,7 @@ class BroadcastCog(commands.Cog):
     ):
         await interaction.response.defer(ephemeral=True)
 
-        forward_role = self.database.get_roles(guild_id=interaction.guild.id)
+        forward_role = self.database.get_forward_roles(guild_id=interaction.guild.id)
         active_ids = baseUtils.ListCommon([forward_role, [role.id for role in message.role_mentions]])
         all_members = [member async for member in interaction.guild.fetch_members(limit=None)]
 
@@ -129,16 +129,16 @@ class BroadcastCog(commands.Cog):
         )):
         await interaction.response.defer(ephemeral=True)
 
-        current_roles = self.database.get_roles(guild_id=interaction.guild.id)
+        current_roles = self.database.get_forward_roles(guild_id=interaction.guild.id)
 
         if role.id not in current_roles:
             return await interaction.followup.send(
                 f"Rola {role.mention} nie znajduje się na liście do przekazywania.",
                 ephemeral=True
             )
-        self.database.remove_role(guild_id=interaction.guild.id, role_id=role.id)
+        self.database.remove_forward_role(guild_id=interaction.guild.id, role_id=role.id)
 
-        updated_roles = self.database.get_roles(guild_id=interaction.guild.id)
+        updated_roles = self.database.get_forward_roles(guild_id=interaction.guild.id)
 
         if updated_roles:
             all_forward = [f"<@&{r_id}>" for r_id in updated_roles]
