@@ -14,6 +14,7 @@ def main():
 
     intents = nextcord.Intents.default()
     intents.message_content = True
+    intents.voice_states = True
     intents.messages = True
     intents.members = True
     intents.guilds = True
