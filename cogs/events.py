@@ -42,3 +42,7 @@ class EventsCog(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         self.database.remove_guild(guild.id)
+
+    @commands.Cog.listener()
+    async def on_guild_role_delete(self, role):
+        self.database.remove_role(role.guild.id, role.id)
