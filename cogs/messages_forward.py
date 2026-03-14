@@ -65,7 +65,7 @@ class BroadcastCog(commands.Cog):
                     f"Przesłana wiadomość autorstwa **{message.author.display_name}**\n"
                     f"Z **{interaction.guild.name}**\n\n"
                     f"{clean_content}\n\n"
-                    f"_Otrzymujesz tę wiadomość ponieważ została przekzana przez administratora,_\n"
+                    f"_Otrzymujesz tę wiadomość ponieważ została przekazana przez administratora,_\n"
                     f"_oraz posiadasz jedną z tych ról: {', '.join(mentioned_roles)}_"
                 )
 
