@@ -100,7 +100,7 @@ class MessagesForwardCog(commands.Cog):
          )):
         await interaction.response.defer(ephemeral=True)
 
-        self.database.add_role(guild_id=interaction.guild.id, role_id=role.id)
+        self.database.add_forward_role(guild_id=interaction.guild.id, role_id=role.id)
 
         roles_ids = self.database.get_roles(guild_id=interaction.guild.id)
         all_forward = [f"<@&{r_id}>" for r_id in roles_ids]
