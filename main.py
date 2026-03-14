@@ -10,7 +10,7 @@ except:
 
 def main():
     config = baseUtils.ConfigReader('config.json')
-    database = dcDatabase.DB('./data', 'roompm.db')
+    database = dcDatabase.DB('/data', 'roompm.db')
 
     intents = nextcord.Intents.default()
     intents.message_content = True
