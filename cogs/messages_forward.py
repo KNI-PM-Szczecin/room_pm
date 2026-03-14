@@ -102,7 +102,7 @@ class MessagesForwardCog(commands.Cog):
 
         self.database.add_forward_role(guild_id=interaction.guild.id, role_id=role.id)
 
-        roles_ids = self.database.get_roles(guild_id=interaction.guild.id)
+        roles_ids = self.database.get_forward_roles(guild_id=interaction.guild.id)
         all_forward = [f"<@&{r_id}>" for r_id in roles_ids]
 
         content = (
