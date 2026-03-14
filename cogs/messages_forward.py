@@ -4,7 +4,7 @@ import nextcord
 from utilities import baseUtils, dcDatabase
 from nextcord.ext import commands, application_checks
 
-class BroadcastCog(commands.Cog):
+class MessagesForwardCog(commands.Cog):
     def __init__(self, client, config: baseUtils.ConfigReader, database: dcDatabase.DB):
         self.client = client
         self.config = config

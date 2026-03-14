@@ -3,8 +3,7 @@ from datetime import datetime
 from nextcord.ext import commands
 from utilities import baseUtils, dcDatabase
 
-
-class ActivityCog(commands.Cog):
+class ActivityEventsCog(commands.Cog):
     POINT_MAP = {
         "new_message": 1.0,
         "edit_message": 0.0,
