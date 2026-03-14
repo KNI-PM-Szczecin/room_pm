@@ -28,7 +28,7 @@ class ActivityEventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f" > Logged in as {self.client.user}. Activity Tracking System is now ONLINE.")
+        print(f" > Activity Tracking System is now ONLINE.")
 
     @commands.Cog.listener()
     async def on_message(self, message: nextcord.Message):
@@ -121,16 +121,23 @@ class ActivityEventsCog(commands.Cog):
         session_key = (user_id, guild_id)
         afk_channel = member.guild.afk_channel
 
+        def process_voice_session(start_time):
+            duration = datetime.now() - start_time
+            full_minutes = int(duration.total_seconds() // 60)
+
+            if full_minutes > 0:
+                raw_points = full_minutes * self.POINT_MAP["voice_per_minute"]
+                final_points = round(raw_points, 2)
+                self.database.add_activity_points(user_id, guild_id, final_points)
+
         if before.channel is not None and (after.channel is None or after.channel == afk_channel):
             if session_key in self.voice_start_times:
                 start_time = self.voice_start_times.pop(session_key)
-                minutes = (datetime.now() - start_time).total_seconds() / 60
-                if minutes > 0:
-                    self.database.add_activity_points(user_id, guild_id, minutes * self.POINT_MAP["voice_per_minute"])
+                process_voice_session(start_time)
 
         elif after.channel is not None and after.channel != afk_channel:
             if before.channel is not None and session_key in self.voice_start_times:
                 start_time = self.voice_start_times.pop(session_key)
-                minutes = (datetime.now() - start_time).total_seconds() / 60
-                self.database.add_activity_points(user_id, guild_id, minutes * self.POINT_MAP["voice_per_minute"])
+                process_voice_session(start_time)
+
             self.voice_start_times[session_key] = datetime.now()

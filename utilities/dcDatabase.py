@@ -23,9 +23,9 @@ class DB:
                    guild_id INTEGER,
                    date TEXT,
                    activity_points REAL DEFAULT 0,
-                   PRIMARY KEY (user_id, date)
+                   PRIMARY KEY (user_id, guild_id, date)
                 )
-                           ''')
+               ''')
             conn.commit()
 
     def add_froward_guild(self, guild_id):
