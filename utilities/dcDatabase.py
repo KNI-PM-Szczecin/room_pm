@@ -28,6 +28,10 @@ class DB:
                ''')
             conn.commit()
 
+    #
+    # Message forward
+    #
+
     def add_froward_guild(self, guild_id):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
@@ -89,6 +93,30 @@ class DB:
                 )
                 conn.commit()
 
+    #
+    # Activity points
+    #
+
+    def _group_data_by_step(self, db_data, start_date_obj, end_date_obj, step):
+        stats = {}
+        current_date = start_date_obj
+
+        while current_date <= end_date_obj:
+            group_sum = 0.0
+            group_label = current_date.strftime('%Y-%m-%d')
+
+            for _ in range(step):
+                if current_date > end_date_obj:
+                    break
+
+                date_str = current_date.strftime('%Y-%m-%d')
+                group_sum += db_data.get(date_str, 0.0)
+                current_date += timedelta(days=1)
+
+            stats[group_label] = round(group_sum, 2)
+
+        return stats
+
     def add_activity_points(self, user_id, guild_id, points, date=None):
         if date is None:
             date = datetime.now().strftime('%Y-%m-%d')
@@ -135,3 +163,48 @@ class DB:
                    LIMIT ?
                 ''', (guild_id, start_date, limit))
             return cursor.fetchall()
+
+    def get_user_activity_stats(self, user_id, guild_id, days_back, end_days_back=0, step=1):
+        start_date_obj = datetime.now() - timedelta(days=days_back)
+        end_date_obj = datetime.now() - timedelta(days=end_days_back)
+
+        start_date_str = start_date_obj.strftime('%Y-%m-%d')
+        end_date_str = end_date_obj.strftime('%Y-%m-%d')
+
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT date, activity_points
+                FROM user_activity
+                WHERE user_id = ? AND guild_id = ? AND date BETWEEN ? AND ?
+                ORDER BY date ASC
+                ''', (user_id, guild_id, start_date_str, end_date_str))
+            db_data = dict(cursor.fetchall())
+
+        return self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
+
+    def get_group_activity_stats(self, user_ids, guild_id, days_back, end_days_back=0, step=1):
+        if not user_ids:
+            return {}
+
+        start_date_obj = datetime.now() - timedelta(days=days_back)
+        end_date_obj = datetime.now() - timedelta(days=end_days_back)
+        start_date_str = start_date_obj.strftime('%Y-%m-%d')
+        end_date_str = end_date_obj.strftime('%Y-%m-%d')
+
+        placeholders = ', '.join(['?'] * len(user_ids))
+
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            query = f'''
+                SELECT date, SUM(activity_points) 
+                FROM user_activity 
+                WHERE guild_id = ? AND date BETWEEN ? AND ? AND user_id IN ({placeholders})
+                GROUP BY date
+                ORDER BY date ASC
+            '''
+            params = [guild_id, start_date_str, end_date_str] + list(user_ids)
+            cursor.execute(query, params)
+            db_data = dict(cursor.fetchall())
+
+        return self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
