@@ -8,6 +8,9 @@ import subprocess
 
 class Requirements:
     def __init__(self, txt_file="requirements.txt"):
+        if os.path.exists('/.dockerenv'):
+            return
+
         requirements_path = txt_file
 
         if os.path.exists(requirements_path):
@@ -93,7 +96,7 @@ class Loader:
                 except Exception as e:
                     print(f"\n > Unexpected error loading {module_name}: {e}\n")
 
-class HoursConverter:
+class TimeTools:
     HOURS_MAP = {
         1: ["8:00", "8:45"],
         2: ["8:50", "9:35"],
@@ -111,61 +114,34 @@ class HoursConverter:
         14: ["19:55", "20:40"]
     }
 
-    def __init__(self, number: int):
-        self.number = number
+    @staticmethod
+    def get_hours(number: int):
+        return TimeTools.HOURS_MAP.get(number, [])
 
-    def __getitem__(self, index: int):
-        time_list = self.HOURS_MAP.get(self.number, [])
-        return time_list[index]
-
-    def __str__(self):
-        time = self.HOURS_MAP.get(self.number, "Incorrect value")
-        return str(time)
-
-class ZeroNum:
-    def __init__(self, number: int, _len: int = 2):
-        self.len = _len
-        self.number = str(number)
-
-    def __str__(self):
-        return self.number.zfill(self.len)
-
-class ShortYear:
-    def __init__(self, year):
-        self.year = str(year)
-        self.base = str(datetime.date.today().year)
-
-    def __str__(self):
-        prefix_len = len(self.base) - len(self.year)
+    @staticmethod
+    def short_year(year):
+        year_str = str(year)
+        base = str(datetime.date.today().year)
+        prefix_len = len(base) - len(year_str)
         if prefix_len < 0:
-            return self.year
-        return self.base[:prefix_len] + self.year
+            return year_str
+        return base[:prefix_len] + year_str
 
-class ListCommon:
-    def __init__(self, data: list[list]):
+class FormatTools:
+    @staticmethod
+    def zero_num(number: int, _len: int = 2):
+        return str(number).zfill(_len)
+
+class ListTools:
+    @staticmethod
+    def list_common(data: list[list]):
         if not data:
-            self.result = []
-            return
+            return []
 
         first_list = data[0]
         other_sets = [set(sublist) for sublist in data[1:]]
 
-        self.result = [
+        return [
             item for item in first_list
             if all(item in s for s in other_sets)
         ]
-
-    def __str__(self):
-        return str(self.result)
-
-    def __repr__(self):
-        return f"ListCommon({self.result})"
-
-    def __iter__(self):
-        return iter(self.result)
-
-    def __getitem__(self, index):
-        return self.result[index]
-
-    def __len__(self):
-        return len(self.result)

@@ -21,7 +21,7 @@ class RoomCog(commands.Cog):
             min_values=1,
             max_values=14,
             options=[
-                nextcord.SelectOption(label=f"Godzina {i} (od {baseUtils.HoursConverter(i)[0]} do {baseUtils.HoursConverter(i)[1]})", value=str(i)) for i in range(1, 15)
+                nextcord.SelectOption(label=f"Godzina {i} (od {baseUtils.TimeTools.get_hours(i)[0]} do {baseUtils.TimeTools.get_hours(i)[1]})", value=str(i)) for i in range(1, 15)
             ]
         )
         async def select_callback(self, select: nextcord.ui.StringSelect, interaction: nextcord.Interaction):
@@ -71,10 +71,10 @@ class RoomCog(commands.Cog):
         )):
         await interaction.response.defer(ephemeral=True)
 
-        day = baseUtils.ZeroNum(str(day))
-        if month is not None: month = baseUtils.ZeroNum(str(month))
-        else: month = baseUtils.ZeroNum(str(datetime.today().month))
-        if year is not None: year = baseUtils.ShortYear(year)
+        day = baseUtils.FormatTools.zero_num(str(day))
+        if month is not None: month = baseUtils.FormatTools.zero_num(str(month))
+        else: month = baseUtils.FormatTools.zero_num(str(datetime.today().month))
+        if year is not None: year = baseUtils.TimeTools.short_year(year)
         else: year = datetime.today().year
         date = f"{day}-{month}-{year}"
         date_iso = f"{year}-{month}-{day}"
@@ -84,15 +84,15 @@ class RoomCog(commands.Cog):
 
         await view.wait()
 
-        hours = [baseUtils.HoursConverter(i) for i in view.selected_hours]
-        rooms = baseUtils.ListCommon([
+        hours = [baseUtils.TimeTools.get_hours(i) for i in view.selected_hours]
+        rooms = baseUtils.ListTools.list_common([
             [room["name"] for room in
              self.roomFinder.findEmptyRooms(f"{date_iso} {h[0]}", building, f"{date_iso} {h[1]}")]
             for h in hours
         ])
 
         if view.selected_hours:
-            formatted_hours = [f"{h}: {baseUtils.HoursConverter(h)[0]}-{baseUtils.HoursConverter(h)[1]}" for h in view.selected_hours]
+            formatted_hours = [f"{h}: {baseUtils.TimeTools.get_hours(h)[0]}-{baseUtils.TimeTools.get_hours(h)[1]}" for h in view.selected_hours]
             hours_string = ", ".join(formatted_hours)
             rooms_string = ", ".join(rooms) if rooms else "Brak wolnych sal dla wybranych godzin."
 

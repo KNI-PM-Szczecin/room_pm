@@ -28,11 +28,7 @@ class DB:
                ''')
             conn.commit()
 
-    #
-    # Message forward
-    #
-
-    def add_froward_guild(self, guild_id):
+    def add_forward_guild(self, guild_id):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
@@ -92,10 +88,6 @@ class DB:
                     (roles_json, guild_id)
                 )
                 conn.commit()
-
-    #
-    # Activity points
-    #
 
     def _group_data_by_step(self, db_data, start_date_obj, end_date_obj, step):
         stats = {}

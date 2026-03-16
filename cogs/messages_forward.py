@@ -21,7 +21,7 @@ class MessagesForwardCog(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         forward_role = self.database.get_forward_roles(guild_id=interaction.guild.id)
-        active_ids = baseUtils.ListCommon([forward_role, [role.id for role in message.role_mentions]])
+        active_ids = baseUtils.ListTools.list_common([forward_role, [role.id for role in message.role_mentions]])
         all_members = [member async for member in interaction.guild.fetch_members(limit=None)]
 
         target_members = [
@@ -76,8 +76,7 @@ class MessagesForwardCog(commands.Cog):
                 success_count += 1
             except nextcord.Forbidden:
                 fail_count += 1
-            except Exception as e:
-                print(f"Błąd wysyłania do {member.name}: {e}")
+            except Exception:
                 fail_count += 1
 
         await interaction.followup.send(

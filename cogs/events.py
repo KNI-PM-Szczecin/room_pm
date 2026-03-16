@@ -14,7 +14,7 @@ class EventsCog(commands.Cog):
         added_count = 0
         for guild in self.client.guilds:
             if guild.id not in db_guild_ids:
-                self.database.add_froward_guild(guild.id)
+                self.database.add_forward_guild(guild.id)
                 added_count += 1
                 print(f" > Guild synchronized: {guild.name} ({guild.id})")
 
@@ -37,7 +37,7 @@ class EventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        self.database.add_froward_guild(guild.id)
+        self.database.add_forward_guild(guild.id)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
