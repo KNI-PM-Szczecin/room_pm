@@ -156,7 +156,7 @@ class DB:
                 ''', (guild_id, start_date, limit))
             return cursor.fetchall()
 
-    def get_user_activity_stats(self, user_id, guild_id, days_back, end_days_back=0, step=1):
+    def get_user_activity_stats(self, name, user_id, guild_id, days_back, end_days_back=0, step=1):
         start_date_obj = datetime.now() - timedelta(days=days_back)
         end_date_obj = datetime.now() - timedelta(days=end_days_back)
 
@@ -166,19 +166,17 @@ class DB:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT date, activity_points
-                FROM user_activity
-                WHERE user_id = ? AND guild_id = ? AND date BETWEEN ? AND ?
-                ORDER BY date ASC
-                ''', (user_id, guild_id, start_date_str, end_date_str))
+                           SELECT date, activity_points
+                           FROM user_activity
+                           WHERE user_id = ? AND guild_id = ? AND date BETWEEN ? AND ?
+                           ORDER BY date ASC
+                           ''', (user_id, guild_id, start_date_str, end_date_str))
             db_data = dict(cursor.fetchall())
 
-        return self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
+        stats = self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
+        return {"name": name, **stats}
 
-    def get_group_activity_stats(self, user_ids, guild_id, days_back, end_days_back=0, step=1):
-        if not user_ids:
-            return {}
-
+    def get_group_activity_stats(self, name, user_ids, guild_id, days_back, end_days_back=0, step=1):
         start_date_obj = datetime.now() - timedelta(days=days_back)
         end_date_obj = datetime.now() - timedelta(days=end_days_back)
         start_date_str = start_date_obj.strftime('%Y-%m-%d')
@@ -199,4 +197,5 @@ class DB:
             cursor.execute(query, params)
             db_data = dict(cursor.fetchall())
 
-        return self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
+        stats = self._group_data_by_step(db_data, start_date_obj, end_date_obj, step)
+        return {"name": name, **stats}
