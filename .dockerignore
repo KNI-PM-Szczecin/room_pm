@@ -25,3 +25,5 @@ __pycache__/
 # Git
 .git/
 .gitignore
+# Konfiguracja jest montowana dopiero podczas uruchamiania
+config.json

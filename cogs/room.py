@@ -17,6 +17,7 @@ class RoomCog(commands.Cog):
             self.selected_hours = []
 
         @nextcord.ui.string_select(
+            custom_id="roompm:hour_select",
             placeholder="Wybierz godziny (1-14)...",
             min_values=1,
             max_values=14,

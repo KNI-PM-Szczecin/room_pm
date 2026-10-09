@@ -41,3 +41,23 @@ RoomPM stanowi integralną część ekosystemu narzędzi KNI.
 Projekt jest rozwijany i utrzymywany przez członków **Koła Naukowego Informatyki PM**. 
 
 ---
+
+
+## Wdrożenie na Macu mini przez Jenkins
+
+`Jenkinsfile` pobiera `main`, buduje obraz na Macu mini, sprawdza menu godzin, konfigurację i odczyt Supabase, a następnie uruchamia kontener `room_pm_bot`. Sukces wymaga komunikatu gotowości Discord i braku restartów kontenera. Pipeline odpytuje Git co 2 minuty. Obrazy mają tag `<commit>-<numer buildu>`.
+
+- Konfiguracja: `/Users/wiit1/Containers/room_pm/config.json` (uprawnienia `600`, montowana tylko do odczytu).
+- SQLite: `/Users/wiit1/Containers/room_pm/data/roompm.db` — zachowana pomiędzy wdrożeniami.
+- Logi: `docker logs --tail 80 room_pm_bot`. Bot nie wystawia portów.
+- Job: `http://mac-mini-wiit1.tailab0a78.ts.net:8080/job/room_pm/`.
+
+Skopiuj `config.example.json` do `config.json` i uzupełnij `bot.token`, `bot.id`, `supabase.url` i `supabase.key`. Konfiguracja robocza jest wykluczona z Git i obrazu Dockera. Token musi należeć do RoomPM. W Discord Developer Portal bot wymaga włączonych intentów **Server Members** i **Message Content** oraz dodania go do docelowego serwera.
+
+Pipeline używa jawnego socketu Docker Desktop i osobnego `DOCKER_CONFIG` w workspace. Publiczne obrazy pobiera bez credential helpera macOS Keychain. Nie zmienia konfiguracji Dockera innych usług.
+
+Wdrożenie 2026-10-09: build #3 zakończył się SUCCESS; RoomPM jest połączony z Discordem, cztery komendy są zarejestrowane, SQLite zawiera dwa serwery, kontener ma zero restartów. Poprawiono brak `custom_id` menu godzin, który powodował błąd Discord 400/50035 i pozostawiał komendę na „thinking”. Test obsługi komendy z symulowanym Discordem i rzeczywistą Supabase potwierdził wyświetlenie menu i wynik wyszukiwania.
+
+### Otwarte pytania
+
+Job na Macu mini używa zapisanej kopii pipeline'u jako **Pipeline script**. Aby pobierał również Jenkinsfile z GitHub, przełączyć go na **Pipeline script from SCM**, repo `https://github.com/KNI-PM-Szczecin/room_pm.git`, gałąź `*/main`, Script Path `Jenkinsfile`. Obecna kopia pipeline'u stosuje tymczasowy patch menu godzin, pomijany, gdy poprawka jest już w kodzie; wersja Jenkinsfile w repo nie potrzebuje tego etapu.

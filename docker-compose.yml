@@ -1,8 +1,22 @@
 services:
   room-pm:
+    image: ${ROOMPM_IMAGE:-room-pm:latest}
     build: .
     container_name: room_pm_bot
-    restart: always
+    restart: unless-stopped
+    environment:
+      PYTHONUNBUFFERED: "1"
+      TZ: Europe/Warsaw
     volumes:
-      - ./config.json:/roompm/config.json
-      - ./data:/data
+      - type: bind
+        source: ${ROOMPM_CONFIG_PATH:-./config.json}
+        target: /roompm/config.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - ${ROOMPM_DATA_PATH:-./data}:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

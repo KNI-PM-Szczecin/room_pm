@@ -33,6 +33,7 @@ env/
 *.ipr
 
 # --- Bot Configuration and Sensitive Data ---
+config.json
 dev_config.json
 .env
 
